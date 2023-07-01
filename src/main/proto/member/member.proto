@@ -1,0 +1,17 @@
+syntax = "proto3";
+package member;
+
+
+message MemberRequest {
+  string username = 1;
+}
+
+message MemberResponse {
+  string username = 1;
+  string first_name = 2;
+  string last_name = 3;
+}
+
+service MemberService {
+  rpc Get(MemberRequest) returns (MemberResponse);
+}
