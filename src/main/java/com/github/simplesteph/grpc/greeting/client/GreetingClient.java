@@ -1,10 +1,7 @@
 package com.github.simplesteph.grpc.greeting.client;
 
 import com.proto.dummy.DummyServiceGrpc;
-import com.proto.greet.GreetRequest;
-import com.proto.greet.GreetResponse;
-import com.proto.greet.GreetServiceGrpc;
-import com.proto.greet.Greeting;
+import com.proto.greet.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -25,8 +22,10 @@ public class GreetingClient {
 
         //Created a greet service client (blocking - synchronous)
         GreetServiceGrpc.GreetServiceBlockingStub greetClient = GreetServiceGrpc.newBlockingStub(channel);
+
+        //Unary
         //Created a protocol buffer greeting message
-        Greeting greeting = Greeting.newBuilder()
+        /*Greeting greeting = Greeting.newBuilder()
                         .setFirstName("Chloé")
                         .setLastName("Dhaneus")
                         .build();
@@ -37,7 +36,19 @@ public class GreetingClient {
         //Cal the RPC and get back a GreetResponse (protocol buffer)
         GreetResponse greetResponse = greetClient.greet(greetRequest);
 
-        System.out.println(greetResponse.getResult());
+        System.out.println(greetResponse.getResult());*/
+
+        //Server Streaming
+        GreetManyTimeRequest greetManyTimeRequest =
+                GreetManyTimeRequest.newBuilder()
+                                .setGreeting(Greeting.newBuilder().setFirstName("Chloé"))
+                                        .build();
+
+        //We stream the responses (in a blocking manner)
+        greetClient.greetManyTime(greetManyTimeRequest)
+                .forEachRemaining(greetManyTimeResponse -> {
+                    System.out.println(greetManyTimeResponse.getResult());
+                });
 
         //Do something
         System.out.println("Shutting down channel");
